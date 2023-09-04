@@ -26,6 +26,8 @@ public class tree {
         }
         int visibleTrees = countVT(grid);
         System.out.println("Total visible trees: " + visibleTrees);
+        int highScore = findHighScore(grid);
+        System.out.println("Hightest scenic score: " + highScore);
         sc.close();
     }
 
@@ -45,38 +47,34 @@ public class tree {
                 boolean upVisible = true;
                 boolean downVisible = true;
 
-                // Check left
+                // left
                 for (int k = 0; k < j; k++) {
                     if (grid.get(i).get(k) >= currentHeight) {
                         leftVisible = false;
                         break;
                     }
                 }
-
-                // Check right
+                // right
                 for (int k = j + 1; k < cols; k++) {
                     if (grid.get(i).get(k) >= currentHeight) {
                         rightVisible = false;
                         break;
                     }
                 }
-
-                // Check up
+                // up
                 for (int k = 0; k < i; k++) {
                     if (grid.get(k).get(j) >= currentHeight) {
                         upVisible = false;
                         break;
                     }
                 }
-
-                // Check down
+                // down
                 for (int k = i + 1; k < rows; k++) {
                     if (grid.get(k).get(j) >= currentHeight) {
                         downVisible = false;
                         break;
                     }
                 }
-
                 if (leftVisible || rightVisible || upVisible || downVisible) {
                     count++;
                 }
@@ -84,5 +82,54 @@ public class tree {
         }
 
         return count;
+    }
+    public static int findHighScore(List<List<Integer>> grid) {
+        int rows = grid.size();
+        int cols = grid.get(0).size();
+        int highestScore = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                int currentHeight = grid.get(i).get(j);
+                int scenicScore = calculScore(grid, i, j, currentHeight);
+                highestScore = Math.max(highestScore, scenicScore);
+            }
+        }
+        return highestScore;
+    }
+    public static int calculScore(List<List<Integer>> grid, int row, int col, int height) {
+        if (row == 0 || row == grid.size() - 1 || col == 0 || col == grid.get(0).size() - 1) {
+            return 0;
+        }
+        int rows = grid.size();
+        int cols = grid.get(0).size();
+        int left = 0;
+        int right = 0;
+        int up = 0;
+        int down = 0;
+        for (int i = col - 1; i >= 0; i--) {
+            left++;
+            if (grid.get(row).get(i) >= height) {
+                break;
+            }
+        }
+        for (int i = col + 1; i < cols; i++) {
+            right++;
+            if (grid.get(row).get(i) >= height) {
+                break;
+            }
+        }
+        for (int i = row - 1; i >= 0; i--) {
+            up++;
+            if (grid.get(i).get(col) >= height) {
+                break;
+            }
+        }
+        for (int i = row + 1; i < rows; i++) {
+            down++;
+            if (grid.get(i).get(col) >= height) {
+                break;
+            }
+        }
+        return left*right*up*down;
     }
 }
